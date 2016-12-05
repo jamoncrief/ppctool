@@ -1,0 +1,44 @@
+<script type=text/javascript>
+    $(function() {
+      $('a#calculate').bind('click', function() {
+        $.getJSON($SCRIPT_ROOT + '/_ACOSintervalw', {
+          clicks: $('input[name="clicks"]').val(),
+          cpc: $('input[name="cpc"]').val(),
+		  conversions: $('input[name="conversions"]').val(),
+          totalsales: $('input[name="totalsales"]').val(),
+		  totalspend: $('input[name="totalspend"]').val()
+        }, function(data) {
+          $("#resultw").text(data.resultw);
+        });
+        return false;
+      });
+    });
+  </script>
+
+    <h1>ACOS% Confidence Interval Tool</h1>
+    
+  <body>
+    <div class="container">
+      <div>
+      <p>Enter the number of clicks: 
+		<input type="text" size="10" name="clicks"> </br>
+		Enter the average cost per click (in dollars): 
+		<input type="text" size="10" name="cpc"> </br>
+		Enter the number of conversions/orders: 
+		<input type="text" size="10" name="conversions"> </br>
+		Enter the total sales (in dollars):
+		<input type="text" size="10" name="totalsales"> </br>
+		Enter the total keyword spend (in dollars):
+		<input type="text" size="10" name="totalspend"> </br>
+		<p><a href=# id=calculate>Calculate</a> </br></br>
+		
+		<p><b>You can be 95% confident the ACOS% is between:  <span id=resultb></span>%   and   <span id=resultw></span>%</b></p>
+		
+     
+    
+      </div>
+    </div>
+        
+        
+    
+{% endblock %}
