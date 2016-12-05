@@ -1,1 +1,1 @@
-web: gunicorn ppctool:app 
+web: gunicorn app:app 
