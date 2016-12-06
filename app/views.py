@@ -60,7 +60,3 @@ def Calculate_ACOS_intervalw():
 	ACOSworst = round(ACOSworst, 1)
 	
 	return jsonify(resultw = ACOSworst)
-	
-	
-if __name__ == '__main__':
-    app.run(debug=True)
