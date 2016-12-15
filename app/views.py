@@ -7,6 +7,10 @@ from math import sqrt
 @app.route('/', methods=['GET', 'POST'])
 def home():
 		return render_template('home.html')
+
+@app.route('/privacypolicy', methods=['GET', 'POST'])
+def privacy():
+		return render_template('privacypolicy.html')
 		
 @app.route('/count', methods=['GET', 'POST'])
 def count():
