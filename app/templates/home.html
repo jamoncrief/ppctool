@@ -15,14 +15,11 @@
           totalsales: $('input[name="totalsales"]').val(),
 		  totalspend: $('input[name="totalspend"]').val()
         }, function(data) {
-          $("#resultb").text(data.resultb);
+          $("#resultb").text(data.resultb + "% (best case) and ");
         });
         return false;
       });
     });
-  </script>
-  
-  <script type=text/javascript>
     $(function() {
       $('a#calculate').bind('click', function() {
         $.getJSON($SCRIPT_ROOT + '/_ACOSintervalw', {
@@ -32,7 +29,7 @@
           totalsales: $('input[name="totalsales"]').val(),
 		  totalspend: $('input[name="totalspend"]').val()
         }, function(data) {
-          $("#resultw").text(data.resultw);
+          $("#resultw").text(data.resultw + "% (worst case)");
         });
         return false;
       });
@@ -54,9 +51,12 @@
 		<input type="text" size="10" name="totalsales"> </br>
 		Enter the total keyword spend (in dollars):
 		<input type="text" size="10" name="totalspend"> </br>
+		
 		<p><a href=# id=calculate>Calculate</a> </br></br>
 		
-		<p><b>You can be 95% confident the ACOS% is between:  <span id=resultb></span>%   and   <span id=resultw></span>%</b></p>
+		<p><b>You can be 95% confident the ACOS% is between:  <span id=resultb></span>   <span id=resultw></span> </b></p>
+		
+	
 		
      
     
