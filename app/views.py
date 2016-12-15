@@ -2,53 +2,66 @@ from app import app
 from flask import render_template, flash, redirect, request, url_for, jsonify, make_response
 from math import sqrt
 
-
+import pycurl
+import urllib
+import json
+import io
 						
 @app.route('/', methods=['GET', 'POST'])
 def home():
 		return render_template('home.html')
-
+		
 @app.route('/privacypolicy', methods=['GET', 'POST'])
 def privacy():
 		return render_template('privacypolicy.html')
 		
-@app.route('/count', methods=['GET', 'POST'])
-def count():
-	if 'count' in request.cookies:
-			flash('Create an account to continue using the PPC ACOS Interval Tool')
-			return render_template('signup.html')
-	else:
-		response = make_response(redirect(url_for('count')))
-		response.set_cookie('count','1')
-		flash('cookie created')
-		return render_template('home.html')
+# @app.route('/count', methods=['GET', 'POST'])
+# def count():
+	# if 'count' in request.cookies:
+			# flash('Create an account to continue using the PPC ACOS Interval Tool')
+			# return render_template('signup.html')
+	# else:
+		# response = make_response(redirect(url_for('count')))
+		# response.set_cookie('count','1')
+		# flash('cookie created')
+		# return render_template('home.html')
+		
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-    # # Here we use a class of some kind to represent and validate our
-    # # client-side form data. For example, WTForms is a library that will
-    # # handle this for us, and we use a custom LoginForm to validate.
-    # form = LoginForm()
-    # if form.validate_on_submit():
-        # # Login and validate the user.
-        # # user should be an instance of your `User` class
-        # login_user(user)
+ 
+@app.route('/login', methods=['GET', 'POST'])
+def loginwithamazon():
+	return render_template('login.html')
+def handlelogin():
+ 
+	b = StringIO.StringIO()
+ 
+	# verify that the access token belongs to us
+	c = pycurl.Curl()
+	c.setopt(pycurl.URL, "https://api.amazon.com/auth/o2/tokeninfo?access_token=" + urllib.quote_plus(access_token))
+	c.setopt(pycurl.SSL_VERIFYPEER, 1)
+	c.setopt(pycurl.WRITEFUNCTION, b.write)
+ 
+	c.perform()
+	d = json.loads(b.getvalue())
+ 
+	if d['aud'] != 'amzn1.application-oa2-client.6537ed54f7d64209a6b4254163d58138' :
+		# the access token does not belong to us
+		raise BaseException("Invalid Token")
+ 
+	# exchange the access token for user profile
+	b = StringIO.StringIO()
+ 
+	c = pycurl.Curl()
+	c.setopt(pycurl.URL, "https://api.amazon.com/user/profile")
+	c.setopt(pycurl.HTTPHEADER, ["Authorization: bearer " + access_token])
+	c.setopt(pycurl.SSL_VERIFYPEER, 1)
+	c.setopt(pycurl.WRITEFUNCTION, b.write)
+ 
+	c.perform()
+	d = json.loads(b.getvalue())
+ 
+	print("{}{}{}".format(d['name'], d['email'], d['user_id']))
 
-        # flask.flash('Logged in successfully.')
-
-        # next = flask.request.args.get('next')
-        # # is_safe_url should check if the url is safe for redirects.
-        # # See http://flask.pocoo.org/snippets/62/ for an example.
-        # if not is_safe_url(next):
-            # return flask.abort(400)
-
-        # return flask.redirect(next or flask.url_for('index'))
-    # return flask.render_template('login.html', form=form)
-	
-	
-#@app.route('/setcount', methods=['GET', 'POST'])
-#def setcount():
-#	count = request.get.
 
 @app.route('/_ACOSintervalb', methods=['GET', 'POST'])
 def Calculate_ACOS_intervalb():
