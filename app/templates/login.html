@@ -29,8 +29,8 @@
 <script type="text/javascript">
 
   document.getElementById('LoginWithAmazon').onclick = function() {
-    options = { scope : 'profile' };
-    amazon.Login.authorize(options, 'https://ppctool.herokuapp.com/handle_login.php');
+    options = { scope : 'profile', popup: true };
+    amazon.Login.authorize(options, 'https://ppctool.herokuapp.com/dashboard');
     return false;
   };
 
