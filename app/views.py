@@ -6,6 +6,10 @@ import pycurl
 import urllib
 import json
 import io
+import requests
+
+from requests_oauthlib import OAuth2Session
+
 						
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -34,6 +38,20 @@ def loginwithamazon():
 	
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+	
+	#fetch authorization token after receiving the authorization code post-LwA
+	token = oauth.fetch_token(
+        #the amazon oauth2 token endpoint
+	'https://api.amazon.com/auth/o2/token',
+        #
+        grant_type=authorization_code,
+	code=#figureouthowtoputauthcodefromurlhere,
+	redirect_uri='https://ppctool.herokuapp.com/dashboard',
+	client_id='AKIAI5PZL5WXNSPYLZTA',
+	client_secret='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'
+	)
+	
+
 	return render_template('dashboard.html')
 
 @app.route('/_ACOSintervalb', methods=['GET', 'POST'])
