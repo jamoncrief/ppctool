@@ -7,7 +7,7 @@ import urllib
 import json
 import io
 import requests
-
+from furl import furl
 from requests_oauthlib import OAuth2Session
 
 						
@@ -39,17 +39,20 @@ def loginwithamazon():
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
 	
+	#r=requests.get("https://ppctool.herokuapp.com/dashboard")
+	#authcode=r.headers.get('access_token')
+	
 	#fetch authorization token after receiving the authorization code post-LwA
-	token = oauth.fetch_token(
+	#token = oauth.fetch_token(
         #the amazon oauth2 token endpoint
-	'https://api.amazon.com/auth/o2/token',
+	#'https://api.amazon.com/auth/o2/token',
         #
-        grant_type=authorization_code,
-	code=#figureouthowtoputauthcodefromurlhere,
-	redirect_uri='https://ppctool.herokuapp.com/dashboard',
-	client_id='AKIAI5PZL5WXNSPYLZTA',
-	client_secret='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'
-	)
+        #grant_type=authorization_code,
+	#code=#figureouthowtoputauthcodefromurlhere,
+	#redirect_uri='https://ppctool.herokuapp.com/dashboard',
+	#client_id='AKIAI5PZL5WXNSPYLZTA',
+	#client_secret='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'
+	#)
 	
 
 	return render_template('dashboard.html')
