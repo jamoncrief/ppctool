@@ -7,7 +7,6 @@ import urllib
 import json
 import io
 import requests
-from furl import furl
 from requests_oauthlib import OAuth2Session
 
 						
