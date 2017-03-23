@@ -54,7 +54,7 @@ def dashboard():
 	#)
 	
 
-	return render_template('dashboard.html')
+	return render_template('authenticated.html')
 
 @app.route('/_ACOSintervalb', methods=['GET', 'POST'])
 def Calculate_ACOS_intervalb():
