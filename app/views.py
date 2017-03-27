@@ -1,13 +1,14 @@
 from app import app
 from flask import render_template, flash, redirect, request, url_for, jsonify, make_response
 from math import sqrt
+from googleads import oauth2
+from oauth2client import client
 
 import pycurl
 import urllib
 import json
 import io
 import requests
-#from requests_oauthlib import OAuth2Session
 
 						
 @app.route('/', methods=['GET', 'POST'])
@@ -18,18 +19,75 @@ def home():
 def privacy():
 		return render_template('privacypolicy.html')
 		
-# @app.route('/count', methods=['GET', 'POST'])
-# def count():
-	# if 'count' in request.cookies:
-			# flash('Create an account to continue using the PPC ACOS Interval Tool')
-			# return render_template('signup.html')
-	# else:
-		# response = make_response(redirect(url_for('count')))
-		# response.set_cookie('count','1')
-		# flash('cookie created')
-		# return render_template('home.html')
-		
-
+# You must configure these 3 values from Google APIs console
+# https://code.google.com/apis/console
+GOOGLE_CLIENT_ID = '603499396792-bl8scdsmlncnjiff8l61f0e8l6li3din.apps.googleusercontent.com'
+GOOGLE_CLIENT_SECRET = 't2hCcF5NCR5Iq3sewc1T67aQ'
+REDIRECT_URI = '/authenticated'  # one of the Redirect URIs from Google APIs console
+ 
+SECRET_KEY = 'DkqQvXDQifThH7_xWNgZoA'
+DEBUG = True
+ 
+app = Flask(__name__)
+app.debug = DEBUG
+app.secret_key = SECRET_KEY
+oauth = OAuth()
+ 
+google = oauth.remote_app('google',
+                          base_url='https://www.google.com/accounts/',
+                          authorize_url='https://accounts.google.com/o/oauth2/auth',
+                          request_token_url=None,
+                          request_token_params={'scope': 'https://www.googleapis.com/auth/userinfo.email',
+                                                'response_type': 'code'},
+                          access_token_url='https://accounts.google.com/o/oauth2/token',
+                          access_token_method='POST',
+                          access_token_params={'grant_type': 'authorization_code'},
+                          consumer_key=GOOGLE_CLIENT_ID,
+                          consumer_secret=GOOGLE_CLIENT_SECRET)
+ 
+@app.route('/')
+def index():
+    access_token = session.get('access_token')
+    if access_token is None:
+        return redirect(url_for('login'))
+ 
+    access_token = access_token[0]
+    from urllib2 import Request, urlopen, URLError
+ 
+    headers = {'Authorization': 'OAuth '+access_token}
+    req = Request('https://www.googleapis.com/oauth2/v1/userinfo',
+                  None, headers)
+    try:
+        res = urlopen(req)
+    except URLError, e:
+        if e.code == 401:
+            # Unauthorized - bad token
+            session.pop('access_token', None)
+            return redirect(url_for('login'))
+        return res.read()
+ 
+    return res.read()
+ 
+ 
+@app.route('/login')
+def login():
+    callback=url_for('authorized', _external=True)
+    return google.authorize(callback=callback)
+ 
+ 
+ 
+@app.route(REDIRECT_URI)
+@google.authorized_handler
+def authorized(resp):
+    access_token = resp['access_token']
+    session['access_token'] = access_token, ''
+    return redirect(url_for('index'))
+ 
+ 
+@google.tokengetter
+def get_access_token():
+    return session.get('access_token')
+ 
  
 @app.route('/login', methods=['GET', 'POST'])
 def loginwithamazon():
@@ -37,6 +95,8 @@ def loginwithamazon():
 	
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
+	
+
 	
 	#r=requests.get("https://ppctool.herokuapp.com/dashboard")
 	#authcode=r.headers.get('access_token')
