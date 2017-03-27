@@ -3,80 +3,56 @@ from flask import render_template, flash, redirect, request, url_for, jsonify, m
 from math import sqrt
 from googleads import oauth2
 from oauth2client import client
+from flask.ext.login import login_user, logout_user, current_user, login_required
 
 import pycurl
 import urllib
 import json
 import io
 import requests
-		
-# You must configure these 3 values from Google APIs console
-# https://code.google.com/apis/console
-GOOGLE_CLIENT_ID = '603499396792-bl8scdsmlncnjiff8l61f0e8l6li3din.apps.googleusercontent.com'
-GOOGLE_CLIENT_SECRET = 't2hCcF5NCR5Iq3sewc1T67aQ'
-REDIRECT_URI = '/dashboard'  # one of the Redirect URIs from Google APIs console
- 
-SECRET_KEY = 'DkqQvXDQifThH7_xWNgZoA'
-DEBUG = True
 
-app.secret_key = SECRET_KEY
-oauth = OAuth()
- 
-google = oauth.remote_app('google',
-                          base_url='https://www.google.com/accounts/',
-                          authorize_url='https://accounts.google.com/o/oauth2/auth',
-                          request_token_url=None,
-                          request_token_params={'scope': 'https://www.googleapis.com/auth/userinfo.email',
-                                                'response_type': 'code'},
-                          access_token_url='https://accounts.google.com/o/oauth2/token',
-                          access_token_method='POST',
-                          access_token_params={'grant_type': 'authorization_code'},
-                          consumer_key=GOOGLE_CLIENT_ID,
-                          consumer_secret=GOOGLE_CLIENT_SECRET)
- 
+
+# @app.route('/authorize/<provider>')
+# def oauth_authorize(provider):
+    # # Flask-Login function
+    # if not current_user.is_anonymous():
+        # return redirect(url_for('index'))
+    # oauth = OAuthSignIn.get_provider(provider)
+    # return oauth.authorize()
+
+# @app.route('/callback/<provider>')
+# def oauth_callback(provider):
+    # if not current_user.is_anonymous():
+        # return redirect(url_for('index'))
+    # oauth = OAuthSignIn.get_provider(provider)
+    # username, email = oauth.callback()
+    # if email is None:
+        # # I need a valid email address for my user identification
+        # flash('Authentication failed.')
+        # return redirect(url_for('index'))
+    # # Look if the user already exists
+    # user=User.query.filter_by(email=email).first()
+    # if not user:
+        # # Create the user. Try and use their name returned by Google,
+        # # but if it is not set, split the email address at the @.
+        # nickname = username
+        # if nickname is None or nickname == "":
+            # nickname = email.split('@')[0]
+
+        # # We can do more work here to ensure a unique nickname, if you 
+        # # require that.
+        # user=User(nickname=nickname, email=email)
+        # db.session.add(user)
+        # db.session.commit()
+    # # Log in the user, by default remembering them for their next visit
+    # # unless they log out.
+    # login_user(user, remember=True)
+    # return redirect(url_for('index'))
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
-	
-    access_token = session.get('access_token')
-    if access_token is None:
-        return redirect(url_for('login'))
- 
-    access_token = access_token[0]
-    from urllib2 import Request, urlopen, URLError
- 
-    headers = {'Authorization': 'OAuth '+access_token}
-    req = Request('https://www.googleapis.com/oauth2/v1/userinfo',
-                  None, headers)
-    try:
-        res = urlopen(req)
-    except URLError, e:
-        if e.code == 401:
-            # Unauthorized - bad token
-            session.pop('access_token', None)
-            return redirect(url_for('login'))
-        return res.read()
- 
-    return res.read()
  return render_template('home.html')
  
-@app.route('/login')
-def login():
-    callback=url_for('authorized', _external=True)
-    return google.authorize(callback=callback)
- 
- 
- 
-@app.route(REDIRECT_URI)
-@google.authorized_handler
-def authorized(resp):
-    access_token = resp['access_token']
-    session['access_token'] = access_token, ''
-    return redirect(url_for('home'))
- 
- 
-@google.tokengetter
-def get_access_token():
-    return session.get('access_token')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
