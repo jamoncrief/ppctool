@@ -9,3 +9,4 @@ pycurl==7.43.0
 requests==2.13.0
 setuptools==34.3.2
 googleads==5.3.0
+Flask-SQLAlchemy==2.2
