@@ -14,7 +14,7 @@ import requests
 # https://code.google.com/apis/console
 GOOGLE_CLIENT_ID = '603499396792-bl8scdsmlncnjiff8l61f0e8l6li3din.apps.googleusercontent.com'
 GOOGLE_CLIENT_SECRET = 't2hCcF5NCR5Iq3sewc1T67aQ'
-REDIRECT_URI = '/authenticated'  # one of the Redirect URIs from Google APIs console
+REDIRECT_URI = '/dashboard'  # one of the Redirect URIs from Google APIs console
  
 SECRET_KEY = 'DkqQvXDQifThH7_xWNgZoA'
 DEBUG = True
@@ -36,9 +36,7 @@ google = oauth.remote_app('google',
  
 @app.route('/', methods=['GET', 'POST'])
 def home():
-	return render_template('home.html')
-@app.route('/')
-def index():
+	
     access_token = session.get('access_token')
     if access_token is None:
         return redirect(url_for('login'))
@@ -59,7 +57,7 @@ def index():
         return res.read()
  
     return res.read()
- 
+ return render_template('home.html')
  
 @app.route('/login')
 def login():
@@ -73,17 +71,16 @@ def login():
 def authorized(resp):
     access_token = resp['access_token']
     session['access_token'] = access_token, ''
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
  
  
 @google.tokengetter
 def get_access_token():
     return session.get('access_token')
-	
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-
-	return render_template('authenticated.html')
+	return render_template('dashboard.html')
 
 @app.route('/_ACOSintervalb', methods=['GET', 'POST'])
 def Calculate_ACOS_intervalb():
