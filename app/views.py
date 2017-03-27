@@ -9,15 +9,6 @@ import urllib
 import json
 import io
 import requests
-
-						
-@app.route('/', methods=['GET', 'POST'])
-def home():
-		return render_template('home.html')
-		
-@app.route('/privacypolicy', methods=['GET', 'POST'])
-def privacy():
-		return render_template('privacypolicy.html')
 		
 # You must configure these 3 values from Google APIs console
 # https://code.google.com/apis/console
@@ -27,9 +18,7 @@ REDIRECT_URI = '/authenticated'  # one of the Redirect URIs from Google APIs con
  
 SECRET_KEY = 'DkqQvXDQifThH7_xWNgZoA'
 DEBUG = True
- 
-app = Flask(__name__)
-app.debug = DEBUG
+
 app.secret_key = SECRET_KEY
 oauth = OAuth()
  
@@ -45,6 +34,9 @@ google = oauth.remote_app('google',
                           consumer_key=GOOGLE_CLIENT_ID,
                           consumer_secret=GOOGLE_CLIENT_SECRET)
  
+@app.route('/', methods=['GET', 'POST'])
+def home():
+	return render_template('home.html')
 @app.route('/')
 def index():
     access_token = session.get('access_token')
@@ -87,32 +79,9 @@ def authorized(resp):
 @google.tokengetter
 def get_access_token():
     return session.get('access_token')
- 
- 
-@app.route('/login', methods=['GET', 'POST'])
-def loginwithamazon():
-	return render_template('login.html')
 	
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
-	
-
-	
-	#r=requests.get("https://ppctool.herokuapp.com/dashboard")
-	#authcode=r.headers.get('access_token')
-	
-	#fetch authorization token after receiving the authorization code post-LwA
-	#token = oauth.fetch_token(
-        #the amazon oauth2 token endpoint
-	#'https://api.amazon.com/auth/o2/token',
-        #
-        #grant_type=authorization_code,
-	#code=#figureouthowtoputauthcodefromurlhere,
-	#redirect_uri='https://ppctool.herokuapp.com/dashboard',
-	#client_id='AKIAI5PZL5WXNSPYLZTA',
-	#client_secret='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'
-	#)
-	
 
 	return render_template('authenticated.html')
 
@@ -163,4 +132,8 @@ def Calculate_ACOS_intervalw():
 	ACOSworst = round(ACOSworst, 1)
 	
 	return jsonify(resultw = ACOSworst)
+
+@app.route('/privacypolicy', methods=['GET', 'POST'])
+def privacy():
+		return render_template('privacypolicy.html')
 	
